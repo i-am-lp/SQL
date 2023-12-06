@@ -1,0 +1,70 @@
+# For this project, I downloaded Spotify data from Kaggle.
+# Then I created a table to insert Spotify data into.
+# Finally, I performed analytics on the data using SQL. 
+
+#Creating the table: 
+CREATE TABLE BIT_DB.Spotifydata (
+id integer PRIMARY KEY,
+artist_name varchar NOT NULL,
+track_name varchar NOT NULL,
+track_id varchar NOT NULL,
+popularity integer NOT NULL,
+danceability decimal(4,3) NOT NULL,
+energy decimal(4,3) NOT NULL,
+key integer NOT NULL,
+loudness decimal(5,3) NOT NULL,
+mode integer NOT NULL,
+speechiness decimal(5,4) NOT NULL,
+acousticness decimal(6,5) NOT NULL,
+instrumentalness text NOT NULL,
+liveness decimal(5,4) NOT NULL,
+valence decimal(4,3) NOT NULL,
+tempo decimal(6,3) NOT NULL,
+duration_ms integer NOT NULL,
+time_signature integer NOT NULL 
+)
+
+#Then I inserted the Spotify Data .csv into the table.
+
+#Next, I explored the data using the following SQL. 
+
+#Which artist had the most tracks in the Spotify top 50? How many?
+SELECT artist_name, count(track_name) as amount
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY amount desc
+LIMIT 1
+;
+
+#What was the average danceability and energy of the top 10 songs?
+SELECT avg(danceability) as average_danceability, avg(energy) as average_energy
+FROM BIT_DB.Spotifydata
+Where id<=10
+;
+
+#Who are the top 10 artists based on average popularity?
+SELECT artist_name, avg(popularity) as average_popularity
+FROM BIT_DB.Spotifydata
+GROUP BY artist_name
+ORDER BY average_popularity desc
+LIMIT 10
+;
+
+#Which song was the shortest? Who is it by and what is it titled?
+SELECT artist_name, track_name, duration_ms
+FROM BIT_DB.Spotifydata
+ORDER BY duration_ms
+LIMIT 1
+;
+
+#Calculate the average popularity for the artists in the Spotify data table
+#Then, for every artist with an average popularity of 90 or above, show their name, their average popularity, and label them as a “Top Star”.
+WITH artistpop AS(
+SELECT s.artist_name, AVG(s.popularity) AS average_popularity
+FROM Spotifydata s
+GROUP BY s.artist_name
+)
+SELECT artist_name, average_popularity, 'Top Star' AS tag
+FROM artistpop
+WHERE average_popularity>=90
+;
